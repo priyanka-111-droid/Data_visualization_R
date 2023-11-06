@@ -1,0 +1,397 @@
+---
+title: "my first dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: column #change this to row
+    vertical_layout: fill #fill/scroll
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(dygraphs)
+```
+Page 1
+===
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+```
+
+Visualizations {data-icon="fa-signal"}
+===
+Column
+-----------------------------------------------------------------------
+
+### Chart B {data-height=200}
+
+- one
+- two 
+- three
+
+### Chart C 
+Text board
+
+```{r}
+
+```
+
+Tables {data-icon="fa-table"}
+===
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart D
+
+```{r}
+
+```
+
+### Chart E
+
+```{r}
+
+```
+
+### Chart F
+
+```{r}
+
+```
+
+Page 4 {data-orientation=rows}
+===
+Row {data-height=650}
+-------------------------------------
+    
+### Chart 1
+    
+```{r}
+
+```
+   
+Row {data-height=350}
+-------------------------------------
+    
+### Chart 2
+    
+```{r}
+
+```
+    
+### Chart 3
+
+```{r}
+
+```
+
+Page 5
+===
+Column {data-width=600}
+-------------------------------------
+    
+### Chart 1
+    
+```{r}
+
+```
+   
+Column {data-width=400}
+-------------------------------------
+   
+### Chart 2
+
+```{r}
+
+```   
+ 
+### Chart 3
+    
+```{r}
+
+```
+Page 6 {data-icon="fa-hashtag"}
+===
+Column 
+-------------------------------------
+    
+### Chart 1
+    
+```{r}
+
+```
+   
+Column {data-width=400, .tabset}
+-------------------------------------
+   
+### Chart 2
+
+```{r}
+
+```   
+ 
+### Chart 3
+    
+```{r}
+
+```
+Page 7 {data-orientation=rows}
+===
+Row 
+-------------------------------------
+    
+### Chart 1
+    
+```{r}
+
+```
+   
+Row {.tabset .tabset-fade}
+-------------------------------------
+   
+### Chart 2
+
+```{r}
+
+```   
+ 
+### Chart 3
+    
+```{r}
+
+```
+
+Page 8 {data-orientation=rows}
+===
+Row
+-----------------------------------------------------------------------
+
+### Articles per Day
+
+```{r}
+valueBox(45, icon = "fa-pencil", href="#details")
+```
+
+### Comments per Day
+
+```{r}
+valueBox(126, icon = "fa-comments")
+```
+
+### Spam per Day
+
+```{r}
+spam <- 5
+valueBox(spam, 
+         icon = "fa-trash",
+         color = ifelse(spam > 10, "warning", "primary"))
+```
+
+Page 9 {data-orientation=rows}
+===
+Row {data-height=350}
+-----------------------------------------------------------------------
+
+### Contact Rate
+
+```{r}
+gauge(90, min = 0, max = 100, symbol = '%', gaugeSectors(
+  success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+))
+```
+
+### Average Rating 
+
+```{r}
+gauge(37.4, min = 0, max = 50, gaugeSectors(
+  success = c(41, 50), warning = c(21, 40), danger = c(0, 20)
+))
+```
+
+### Cancellations
+
+```{r}
+gauge(7, min = 0, max = 10, gaugeSectors(
+  success = c(0, 2), warning = c(3, 6), danger = c(7, 10)
+))
+```
+
+Page 10
+===
+Column
+-------------------------------------
+    
+### Chart 1 {data-height=600}
+    
+```{r}
+
+```
+   
+### Chart 2 {data-height=200}
+
+```{r}
+
+```   
+ 
+### Chart 3 {data-height=200}
+    
+```{r}
+
+```
+
+Page 11 {data-orientation=rows}
+===
+Row 
+-------------------------------------
+    
+### Basic bar plot
+    
+```{r}
+data(diamonds)
+diamonds %>% 
+  ggplot(aes(x = cut, y = mean(price), fill = cut)) +
+  geom_bar(stat = "identity") +
+  
+  ggtitle("Basic Bar Plot") +
+  xlab("CUT") +
+  ylab("price") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+   
+Row {.tabset .tabset-fade}
+-------------------------------------
+   
+### Stacked Bar plot
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x = cut, fill = clarity)) + # removed y argument and value
+  geom_bar() +
+  ggtitle("Stacked Bar Plot") +
+  xlab("CUT") +
+  ylab("COUNT") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```   
+ 
+### Density plot
+    
+```{r}
+ggplot(diamonds) +
+  geom_density(aes(x = price, 
+                   fill = cut), alpha = 0.7)+
+  
+  ggtitle("Density Plot") +
+  xlab("price") +
+  ylab("Density") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page 12 {data-orientation=rows}
+===
+Row
+-----------------------------------------------------------------------
+
+### Articles per Day
+
+```{r}
+valueBox(45, icon = "fa-pencil", href="#details")
+```
+
+### Comments per Day
+
+```{r}
+valueBox(126, icon = "fa-comments")
+```
+
+### Spam per Day
+
+```{r}
+spam <- 5
+valueBox(spam, 
+         icon = "fa-trash",
+         color = ifelse(spam > 10, "warning", "primary"))
+```
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Basic bar plot
+    
+```{r}
+data(diamonds)
+diamonds %>% 
+  ggplot(aes(x = cut, y = mean(price), fill = cut)) +
+  geom_bar(stat = "identity") +
+  
+  ggtitle("Basic Bar Plot") +
+  xlab("CUT") +
+  ylab("price") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+   
+### Stacked Bar plot
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x = cut, fill = clarity)) + # removed y argument and value
+  geom_bar() +
+  ggtitle("Stacked Bar Plot") +
+  xlab("CUT") +
+  ylab("COUNT") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```   
+ 
+### Density plot
+    
+```{r}
+ggplot(diamonds) +
+  geom_density(aes(x = price, 
+                   fill = cut), alpha = 0.7)+
+  
+  ggtitle("Density Plot") +
+  xlab("price") +
+  ylab("Density") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
+
+Page13
+===
+Row {data-height=600}
+-------------------------------------
+
+### All Lung Deaths
+
+```{r}
+dygraph(ldeaths)
+```
+Row {data-height=400}
+-------------------------------------
+
+### Male Deaths
+
+```{r}
+dygraph(mdeaths)
+```
+### About dygraphs
+
+This example makes use of the dygraphs R package. The dygraphs
+package provides rich facilities for charting time-series data 
+in R. You can use dygraphs at the R console, within R Markdown
+documents, and within Shiny applications.

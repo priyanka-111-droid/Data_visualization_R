@@ -1,0 +1,199 @@
+---
+title: "second dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(shiny)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+library(colourpicker)
+# load data in 'global' chunk so it can be shared
+# by all users of the dashboard
+library(datasets)
+data(faithful)
+
+data <- read.csv("BankChurners.csv")
+Categorical.Variables = c("Gender", "Education_Level", "Marital_Status")
+Numeric.Variables = c("Customer_Age", "Total_Trans_Ct", "Credit_Limit")
+
+diamonds_data=diamonds[1:20,]
+```
+Faithful Viz
+===
+Column {.sidebar}
+--------------------------------------------------
+
+Waiting time between eruptions and the duration of the eruption
+for the Old Faithful geyser in Yellowstone National Park,
+Wyoming, USA.
+
+```{r}
+selectInput(
+  "n_breaks", label = "Number of bins:",
+  choices = c(10, 20, 35, 50), selected = 20
+)
+
+sliderInput(
+  "bw_adjust", label = "Bandwidth adjustment:",
+  min = 0.2, max = 2, value = 1, step = 0.2
+)
+```
+Column
+--------------------------------------------------
+
+### Geyser Eruption Duration
+
+```{r}
+renderPlot({
+  erpt = faithful$eruptions
+  hist(
+    erpt, probability = TRUE, breaks = as.integer(input$n_breaks),
+    xlab = "Duration (minutes)", main = "Geyser Eruption Duration",
+    col = 'gray', border = 'white'
+  )
+  
+  dens = density(erpt, adjust = input$bw_adjust)
+  lines(dens, col = "blue", lwd = 2)
+})
+```
+
+Bank Viz
+===
+Column {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+
+#Dropdown
+selectInput("categorical_variable", label = "Select Categorical Variable:", choices = Categorical.Variables)
+
+selectInput("numeric_variable", label = "Select Numeric Variable:", choices = Numeric.Variables)
+
+#Checkbox
+#checkboxGroupInput("categorical_variable", label = "Select Categorical Variable:", choices = Categorical.Variables, selected = "Gender")
+
+#checkboxGroupInput("numeric_variable", label = "Select Numeric Variable:", choices = Numeric.Variables, selected = "Customer_Age")
+
+
+```
+Column {data-width=400,}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+renderPlotly({
+   plot_ly(data,
+              x = ~data[[input$numeric_variable]],
+              color = ~data[[input$categorical_variable]],
+              colors = "Paired",
+              type = "box") %>%
+  layout(title = "",
+         xaxis = list(title = "" ,
+                      zeroline = FALSE))
+})
+```
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+renderPlotly({
+  data %>%
+    count(var = data[[input$categorical_variable]], name = "count") %>%
+    plot_ly( x = ~var, y = ~ count, type = "bar", marker = list(color = '#008ae6',
+                           line = list(color = '#008ae6', width = 2)), hoverinfo = "x+y") %>%
+    add_text(text = ~paste0( " (",   scales::percent(count/sum(count)),")"), 
+           textposition = "bottom", 
+           textfont = list(size = 12, color = "white"), 
+           showlegend = FALSE) %>%
+    layout(xaxis = list(title = ""), yaxis = list(title = ""))
+    
+})
+```
+Diamonds Viz
+===
+Column {data-width=400, .tabset}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+diaviz <- ggplot(data = diamonds_data, aes(x = color, y = depth, color = cut, shape = clarity)) + geom_point(size = 3)
+
+diaviz %>% 
+  ggplotly()
+```
+
+### Chart B
+
+```{r}
+radioButtons(inputId = "plot_type" , label = "Select the plot", choices = c("scatter", "bar", "hist" ))
+renderPlot({
+    if (input$plot_type == "scatter") {
+      ggplot(diamonds_data, aes(cut, price)) + geom_point()
+    } else if (input$plot_type == "bar") {
+      ggplot(diamonds_data, aes(x=cut, y=price, fill=cut)) + geom_bar(stat="identity")
+    }
+      else if (input$plot_type == "hist") {
+      ggplot(diamonds_data, aes(price)) + geom_histogram()
+    }
+  })
+
+```
+### Chart C
+
+```{r}
+colourInput("col", "Choose colour", "red")
+renderPlot({
+  ggplot(diamonds_data, aes(price)) + geom_histogram(fill = input$col) 
+  })
+
+```
+Page 3 {data-navmenu="Menu A" data-navmenu-icon="fa-bookmark"}
+=====================================
+
+
+Page 4 {data-navmenu="Menu A"}
+=====================================  
+
+
+Page 5 {data-navmenu="Menu B" data-navmenu="fa-cog"}
+=====================================
+
+
+Page 6 {data-navmenu="Menu B"}
+==========================================
+
+Page 7
+===================================== 
+
+You can link to a dashboard page with the following syntax:
+
+[Page 8]
+
+The second syntax is used when you want a custom name for the link 
+(rather than just using the page title).
+
+### Chart A
+    
+```{r}
+```
+
+Page 8
+=====================================     
+
+### Chart B
+    
+```{r}
+```
+=====================================  
