@@ -1,0 +1,215 @@
+---
+title: "Dashboard Lab DA"
+author: "Priyanka Govindarajan"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(dygraphs)
+library(dslabs)
+library(lattice)
+library(dplyr)
+library(shiny)
+library(ggplot2)
+library(shinyWidgets)
+library(colourpicker)
+```
+
+Page 1{data-orientation=rows}
+===
+Row {data-height=500}
+-------------------------------------
+    
+### Grouped Bar chart
+
+```{r}
+data(mtcars)
+mtcars_data <- mtcars
+# Calculate average mpg for each combination of cyl and gear
+mpg_summary <- mtcars %>%
+  group_by(cyl, gear) %>%
+  summarise(mean_mpg = mean(mpg))
+
+# Create a grouped bar chart
+grouped_bar_chart <- ggplot(mpg_summary, aes(x = factor(cyl), y = mean_mpg, fill = factor(gear))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Average MPG by Cylinders and Gears", x = "Cylinders", y = "Average MPG") +
+  scale_fill_discrete(name = "Gears")
+
+print(grouped_bar_chart)
+
+```
+
+### Bar chart
+    
+```{r}
+
+# Calculate average mpg for each number of cylinders
+avg_mpg <- tapply(mtcars_data$mpg, mtcars_data$cyl, mean)
+
+# Create a bar plot of average mpg per number of cylinders
+barplot(avg_mpg, 
+        xlab = "Number of Cylinders", ylab = "Average MPG",
+        main = "Average MPG by Number of Cylinders",
+        col = "skyblue")
+```
+
+Page 2 
+===
+Column { .tabset}
+---------------------------------------------------------------------
+
+### Box plot
+
+```{r}
+# Create a boxplot of miles per gallon (mpg) for different numbers of cylinders
+boxplot(mpg ~ cyl, data = mtcars_data,
+        xlab = "Number of Cylinders", ylab = "Miles per Gallon",
+        main = "Distribution of MPG by Number of Cylinders")
+
+```
+
+### Density plot
+
+```{r}
+# Create a density plot for miles per gallon (mpg) in mtcars dataset
+ggplot(mtcars, aes(x = mpg, fill = "Density")) +
+  geom_density(alpha = 0.7) +
+  ggtitle("Density Plot for Miles per Gallon") +
+  xlab("Miles per Gallon") +
+  ylab("Density") +
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(face = 'bold', size = 10),
+    axis.text.y = element_text(face = 'bold', size = 10)
+  )
+```
+
+Page 3 
+===
+
+### Pie Chart and Violin Plot
+
+```{r}
+library(shiny)
+library(ggplot2)
+
+# Define UI
+ui <- fluidPage(
+  radioButtons(inputId = "plot_type", label = "Select Plot Type:",
+               choices = c("Pie Chart", "Violin Plot")),
+  plotOutput("selected_plot", height = "400px")  # Adjust the height as needed
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$selected_plot <- renderPlot({
+    if (input$plot_type == "Pie Chart") {
+      ggplot(mtcars, aes(x = factor(1), fill = factor(cyl))) + geom_bar(width = 1) +
+        coord_polar("y") +
+        labs(title = "Number of Cars by Number of Cylinders", x = NULL, y = NULL) +
+        theme_void()
+    } else if (input$plot_type == "Violin Plot") {
+      ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + geom_violin() +
+        labs(title = "Miles Per Gallon Distribution by Cylinders", x = "Cylinders", y = "Miles per Gallon")
+    }
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+
+
+
+```
+
+Page 4 {data-orientation=rows}
+===
+
+### Line Plot and Time Series Plot
+
+```{r}
+library(shiny)
+library(ggplot2)
+
+# Define UI
+ui <- fluidPage(
+  selectInput(inputId="plot_type", label="Select Plot Type:",
+              choices = c("Line Plot", "Time Series Plot")),
+  plotOutput("selected_plot", height = "400px")
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$selected_plot <- renderPlot({
+    if (input$plot_type == "Line Plot") {
+      line_plot <- ggplot(mtcars, aes(x = mpg, y = wt, group = 1)) + geom_line() +
+        labs(title = "Line plot showing Relationship between Miles per Gallon and Weight", x = "Miles per Gallon", y = "Weight")
+      print(line_plot)
+    }  else if (input$plot_type == "Time Series Plot") {
+      time_series <- ggplot(mtcars, aes(x = as.factor(cyl), y = disp, group = 1)) + geom_line() +
+        labs(title = "Time Series Plot for Engine Displacement by Cylinders", x = "Cylinders", y = "Engine Displacement")
+      print(time_series)
+    }
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+
+```
+
+
+Page 5
+===
+Column {data-width=400, .tabset}
+-------------------------------------
+
+### Scatter plot
+
+```{r}
+library(shiny)
+library(ggplot2)
+
+# Define UI
+ui <- fluidPage(
+  sliderInput("points", "Number of Points", min = 10, max = nrow(mtcars), value = 50),
+  plotOutput("scatter_plot")
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$scatter_plot <- renderPlot({
+    data_subset <- mtcars[1:input$points, ]
+    scatter_plot <- ggplot(data = data_subset, aes(x = mpg, y = disp)) +
+      geom_point(color = "blue") +
+      labs(title = "Scatter Plot of Miles per Gallon vs Engine Displacement",
+           x = "Miles per Gallon", y = "Engine Displacement")
+    print(scatter_plot)
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+
+
+```
+
+
+### Histogram
+
+```{r}
+colourInput("col", "Choose colour", "red")
+renderPlot({
+  ggplot(mtcars, aes(x = mpg)) + geom_histogram(fill = input$col)+
+    labs(title="Histogram of Miles per Gallon")
+  })
+
+```
+
