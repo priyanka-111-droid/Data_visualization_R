@@ -23,7 +23,7 @@ library(colourpicker)
 
 Page 1{data-orientation=rows}
 ===
-Row {data-height=500}
+Row {data-height=400}
 -------------------------------------
     
 ### Grouped Bar chart
@@ -129,6 +129,8 @@ shinyApp(ui = ui, server = server)
 
 ```
 
+
+
 Page 4 {data-orientation=rows}
 ===
 
@@ -166,17 +168,20 @@ shinyApp(ui = ui, server = server)
 ```
 
 
+
+
+
+
 Page 5
 ===
 Column {data-width=400, .tabset}
 -------------------------------------
 
-### Scatter plot
 
+### Scatter plot
 ```{r}
 library(shiny)
 library(ggplot2)
-
 # Define UI
 ui <- fluidPage(
   sliderInput("points", "Number of Points", min = 10, max = nrow(mtcars), value = 50),
@@ -190,20 +195,19 @@ server <- function(input, output) {
     scatter_plot <- ggplot(data = data_subset, aes(x = mpg, y = disp)) +
       geom_point(color = "blue") +
       labs(title = "Scatter Plot of Miles per Gallon vs Engine Displacement",
-           x = "Miles per Gallon", y = "Engine Displacement")
+           x = "Miles per Gallon", y = "Engine Displacement"
+      )
     print(scatter_plot)
   })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
-
 ```
 
 
-### Histogram
 
+### Histogram
 ```{r}
 colourInput("col", "Choose colour", "red")
 renderPlot({

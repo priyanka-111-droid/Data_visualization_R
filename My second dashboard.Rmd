@@ -171,7 +171,7 @@ Page 4 {data-navmenu="Menu A"}
 =====================================  
 
 
-Page 5 {data-navmenu="Menu B" data-navmenu="fa-cog"}
+Page 5 
 =====================================
 
 

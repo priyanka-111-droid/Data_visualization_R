@@ -185,6 +185,8 @@ ggplot(gdp_gather) +
                    fill = Country_Name, adjust=1.5), alpha = 0.4) +
   facet_wrap(~Country_Name)
 
+
+
 #boxplot
 ggplot(data_diamonds) +
   geom_boxplot(aes(x = cut, y = carat, fill = cut)) +
@@ -196,6 +198,9 @@ ggplot(data_diamonds) +
   theme(axis.text.x = element_text(face = 'bold', size = 10),
         axis.text.y = element_text(face = 'bold', size = 10))
 
+
+
+
 #grouped boxplot
 ggplot(data_diamonds) +
   geom_boxplot(aes(x = cut, y = carat, fill = clarity)) +
@@ -206,6 +211,7 @@ ggplot(data_diamonds) +
   theme_bw() +
   theme(axis.text.x = element_text(face = 'bold', size = 10),
         axis.text.y = element_text(face = 'bold', size = 10))
+
 
 
 #violin plot
@@ -222,6 +228,9 @@ ggplot(data_diamonds) +
 
 # if cut is fair,max carats are 1
 
+
+
+
 #Ridge Plot
 install.packages("ggridges")
 library(ggridges)
@@ -233,7 +242,6 @@ ggplot(data_diamonds) +
   xlab("carat") +
   ylab("CUT") +
   theme_bw() +
-  
   theme(axis.text.x = element_text(face = 'bold', size = 10),
         axis.text.y = element_text(face = 'bold', size = 10))
 #choose column with less variation
